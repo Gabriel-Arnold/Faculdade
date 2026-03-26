@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     "/Users/gabrielarnold/GitHub/Faculdade/Estruturas de Dados Avançadas/trabalho"
+relocations:     []
+...
