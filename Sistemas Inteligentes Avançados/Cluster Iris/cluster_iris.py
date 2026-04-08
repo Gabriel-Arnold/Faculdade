@@ -3,8 +3,6 @@
 #Base iris
 
 #Imports
-from turtle import distance
-
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import pickle
@@ -43,6 +41,7 @@ dados_num_norm = pd.DataFrame(dados_num_norm,
 
 # --  juntar o dados_num_norm com o dados_cat_norm
 dados_norm = dados_num_norm.join(dados_cat_norm)
+# print(dados_norm.columns)
 
 #3. HIPERPARAMETRIZAR  
 #Vamos determinar o número ótimo de clusters antes do treinamento
@@ -56,17 +55,30 @@ K = range(1, dados.shape[0])
 for i in K:
     cluster_model = KMeans(n_clusters=i, 
                            random_state=42).fit(dados_norm)
-    
-    #calcular e armarzenar a distorção de cada treinamento.
-    distortions.append(
-        sum(np.min(cdist(dados_norm, cluster_model.cluster_centers_, "euclidean"), axis=1)/dados_norm.shape[0])
-    )
 
+    #calcular e armazenar a distorção de cada treinamento
+    distortions.append(
+        sum(
+            np.min(
+                cdist(dados_norm,
+                      cluster_model.cluster_centers_,
+                      'euclidean'), axis=1)/dados_norm.shape[0] 
+            )
+        )
+
+#cria o gráfico para ilustar com a matriz distortions x K
+# fig, ax = plt.subplots()
+# ax.plot(K, distortions)
+# ax.set(xlabel='n Clusters', ylabel='Distorcoes')
+# ax.grid()
+# plt.show()
+    
+#Determinar o número ótimo de cluster para o modelo
 x0 = K[0]
 y0 = distortions[0]
-xn = K[-1]
+xn = K[-1]    
 yn = distortions[-1]
-distance = []
+distances = []
 for i in range(len(distortions)):
     x = K[i]
     y = distortions[i]
@@ -74,20 +86,17 @@ for i in range(len(distortions)):
         (yn-y0)*x - (xn-x0)*y + xn*y0 - yn*x0
     )
     denominador = math.sqrt(
-        (yn - y0)**2 + (xn-x0)**2
+        (yn-y0)**2 + (xn-x0)**2
     )
-    distance.append(numerador/denominador)
+    distances.append(numerador/denominador)
 
-numero_clusters_otimo = K[distance.index(np.max(distance))]
+numero_clusters_otimo = K[distances.index(np.max(distances))]
 
-#print(K[distance.index(np.max(distance))])
-
+#Treinar o modelo com o número ótimo
 cluster_model = KMeans(
-    n_clusters= numero_clusters_otimo,
-    random_state= 42).fit(dados_norm)
+                        n_clusters= numero_clusters_otimo,
+                        random_state= 42).fit(dados_norm)
 
-pickle.dump(cluster_model, open())
+#Salvar o modelo para uso posterior
+pickle.dump(cluster_model, open('cluster_iris.pkl', 'wb'))
 
-
-#Paramos aqui. Falta calcular a distorcao para cada iteração
-#continuaremos na aula do dia 31/03    
