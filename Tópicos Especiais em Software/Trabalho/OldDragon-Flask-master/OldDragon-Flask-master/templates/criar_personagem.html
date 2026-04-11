@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Criação de Personagem</h2>
+
+<form method="post">
+    <label>Nome: <input type="text" name="nome"></label>
+    <button type="submit">Gerar</button>
+</form>
+
+{% if criado and personagem %}
+    <h3>Personagem Criado:</h3>
+    <p><strong>Nome:</strong> {{ personagem.nome }}</p>
+    <table border="1">
+        <tr><th>Atributo</th><th>Valor</th><th>Mod</th></tr>
+        {% for nome, valor in personagem.atributos.items() %}
+        <tr>
+            <td>{{ nome }}</td>
+            <td>{{ valor }}</td>
+            <td>{{ personagem.modificador(nome) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+{% endblock %}
