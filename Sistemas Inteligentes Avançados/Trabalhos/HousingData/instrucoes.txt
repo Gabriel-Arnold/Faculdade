@@ -1,0 +1,7 @@
+1- Preencher vazios
+2- Normalizar
+  - Salvar o modelo normalizado
+3- Determinar o numero de clusters
+4- Treinar e salvar o modelo
+5- Descrever humanamente os clusters
+6- Rodar um model desconhecido e determinar a qual cluster pertence 
