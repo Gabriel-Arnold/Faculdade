@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+
+sistema_principal/data/
+node_storage/data/
+node_storage/data_*/
+
+.DS_Store
