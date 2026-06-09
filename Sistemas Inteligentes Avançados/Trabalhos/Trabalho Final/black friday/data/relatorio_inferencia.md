@@ -10,47 +10,47 @@ transaction_id customer_id age_group gender     city customer_segment product_id
 ## Indicacao para product_category
 
 - Classe mais provavel: `Sports`
-- Grau de certeza: `38.9%`
+- Grau de certeza: `50.78%`
 
 ### Scores por classe
 | Classe | Score |
 |---|---:|
-| Accessories | 30.35% |
-| Beauty | 0.19% |
+| Accessories | 25.86% |
+| Beauty | 0.0% |
 | Books | 0.0% |
-| Clothing | 0.19% |
-| Electronics | 8.46% |
-| Footwear | 0.96% |
-| Groceries | 0.2% |
-| Home & Kitchen | 20.54% |
-| Sports | 38.9% |
-| Toys | 0.21% |
+| Clothing | 0.0% |
+| Electronics | 5.26% |
+| Footwear | 0.27% |
+| Groceries | 0.0% |
+| Home & Kitchen | 17.83% |
+| Sports | 50.78% |
+| Toys | 0.0% |
 
 ## Indicacao para payment_method
 
-- Classe mais provavel: `Mobile Wallet`
-- Grau de certeza: `17.42%`
+- Classe mais provavel: `PayPal`
+- Grau de certeza: `19.67%`
 
 ### Scores por classe
 | Classe | Score |
 |---|---:|
-| Cash | 17.41% |
-| Credit Card | 16.1% |
-| Debit Card | 16.61% |
-| Gift Card | 15.53% |
-| Mobile Wallet | 17.42% |
-| PayPal | 16.92% |
+| Cash | 15.45% |
+| Credit Card | 17.16% |
+| Debit Card | 17.9% |
+| Gift Card | 14.6% |
+| Mobile Wallet | 15.22% |
+| PayPal | 19.67% |
 
 ## Indicacao para age_group
 
 - Classe mais provavel: `56+`
-- Grau de certeza: `21.45%`
+- Grau de certeza: `27.05%`
 
 ### Scores por classe
 | Classe | Score |
 |---|---:|
-| 18-25 | 20.81% |
-| 26-35 | 20.78% |
-| 36-45 | 19.92% |
-| 46-55 | 17.04% |
-| 56+ | 21.45% |
+| 18-25 | 19.36% |
+| 26-35 | 16.74% |
+| 36-45 | 19.67% |
+| 46-55 | 17.19% |
+| 56+ | 27.05% |

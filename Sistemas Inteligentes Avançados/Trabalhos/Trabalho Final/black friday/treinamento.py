@@ -6,11 +6,14 @@ if os.path.isdir('.python_libs'):
     sys.path.insert(0, '.python_libs')
 
 import pandas as pd
+from sklearn.base import clone
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
 
 
@@ -68,8 +71,61 @@ def calcular_metricas(classe_real, classe_predita, classes):
     return matriz, metricas_por_classe
 
 
-def criar_relatorio_markdown(alvo, acuracia_global, f1, matriz, classes, metricas_por_classe, caminho_modelo):
+def balancear_dados(atributos_treino, classe_treino):
+    dados_treino = atributos_treino.copy()
+    dados_treino['classe_alvo'] = classe_treino.values
+
+    maior_classe = dados_treino['classe_alvo'].value_counts().max()
+    dados_balanceados = []
+
+    for _, grupo in dados_treino.groupby('classe_alvo'):
+        grupo_balanceado = grupo.sample(
+            n=maior_classe,
+            replace=True,
+            random_state=42,
+        )
+        dados_balanceados.append(grupo_balanceado)
+
+    dados_balanceados = pd.concat(dados_balanceados)
+    dados_balanceados = dados_balanceados.sample(frac=1, random_state=42)
+
+    classe_balanceada = dados_balanceados['classe_alvo']
+    atributos_balanceados = dados_balanceados.drop(columns=['classe_alvo'])
+    return atributos_balanceados, classe_balanceada
+
+
+def avaliar_com_cross_validation(modelo, atributos, classe, cv):
+    predicoes = pd.Series(index=classe.index, dtype=object)
+
+    for indices_treino, indices_validacao in cv.split(atributos, classe):
+        atributos_treino = atributos.iloc[indices_treino]
+        classe_treino = classe.iloc[indices_treino]
+        atributos_validacao = atributos.iloc[indices_validacao]
+
+        atributos_treino_b, classe_treino_b = balancear_dados(atributos_treino, classe_treino)
+
+        modelo_fold = clone(modelo)
+        modelo_fold.fit(atributos_treino_b, classe_treino_b)
+        predicoes.iloc[indices_validacao] = modelo_fold.predict(atributos_validacao)
+
+    return predicoes
+
+
+def criar_relatorio_markdown(
+    alvo,
+    acuracia_global,
+    f1,
+    matriz,
+    classes,
+    metricas_por_classe,
+    caminho_modelo,
+    frequencia_antes,
+    frequencia_depois,
+    melhores_parametros,
+):
     matriz_df = pd.DataFrame(matriz, index=classes, columns=classes)
+    especificidade_media = sum(m['especificidade'] for m in metricas_por_classe) / len(metricas_por_classe)
+    sensibilidade_media = sum(m['sensibilidade'] for m in metricas_por_classe) / len(metricas_por_classe)
     linhas = [
         '## ' + alvo,
         '',
@@ -78,11 +134,34 @@ def criar_relatorio_markdown(alvo, acuracia_global, f1, matriz, classes, metrica
         '2. Criar `purchase_day` e `purchase_dayofweek` a partir de `purchase_date`',
         '3. Descartar: `' + '`, `'.join(COLUNAS_DESCARTADAS) + '`',
         '4. Remover os alvos das colunas de entrada: `' + '`, `'.join(ALVOS) + '`',
-        '5. Codificar variaveis categoricas com `OneHotEncoder`',
-        '6. Treinar `RandomForestClassifier`',
+        '5. Usar validacao cruzada estratificada',
+        '6. Balancear os dados de treino de cada fold por oversampling',
+        '7. Codificar variaveis categoricas com `OneHotEncoder`',
+        '8. Normalizar variaveis numericas com `StandardScaler`',
+        '9. Hiperparametrizar com `RandomizedSearchCV`',
+        '10. Treinar `RandomForestClassifier` com os melhores parametros',
+        '11. Avaliar a acuracia e demais metricas com cross validation',
+        '',
+        '### Balanceamento',
+        'Frequencia das classes antes do balanceamento:',
+        '```text',
+        frequencia_antes.to_string(),
+        '```',
+        '',
+        'Frequencia das classes depois do balanceamento:',
+        '```text',
+        frequencia_depois.to_string(),
+        '```',
+        '',
+        '### Melhores hiperparametros',
+        '```text',
+        str(melhores_parametros),
+        '```',
         '',
         '### Metricas gerais',
         '- Acuracia global: `' + str(round(acuracia_global, 4)) + '`',
+        '- Especificidade media: `' + str(round(especificidade_media, 4)) + '`',
+        '- Sensibilidade media: `' + str(round(sensibilidade_media, 4)) + '`',
         '- F1-score ponderado: `' + str(round(f1, 4)) + '`',
         '',
         '### Matriz de confusao',
@@ -116,13 +195,9 @@ def treinar_modelo(dados, alvo):
     atributos = dados.drop(columns=ALVOS + COLUNAS_DESCARTADAS)
     classe = dados[alvo]
 
-    atributos_treino, atributos_teste, classe_treino, classe_teste = train_test_split(
-        atributos,
-        classe,
-        test_size=0.3,
-        random_state=42,
-        stratify=classe,
-    )
+    frequencia_antes = classe.value_counts().sort_index()
+    atributos_balanceados, classe_balanceada = balancear_dados(atributos, classe)
+    frequencia_depois = classe_balanceada.value_counts().sort_index()
 
     colunas_categoricas = atributos.select_dtypes(include=['object', 'string']).columns.tolist()
     colunas_numericas = atributos.select_dtypes(exclude=['object', 'string']).columns.tolist()
@@ -130,23 +205,37 @@ def treinar_modelo(dados, alvo):
     pre_processamento = ColumnTransformer(
         transformers=[
             ('categoricas', OneHotEncoder(handle_unknown='ignore'), colunas_categoricas),
-            ('numericas', 'passthrough', colunas_numericas),
+            ('numericas', StandardScaler(), colunas_numericas),
         ]
     )
 
-    modelo = RandomForestClassifier(
-        n_estimators=40,
-        max_depth=12,
-        min_samples_leaf=5,
+    modelo_base = RandomForestClassifier(
         random_state=42,
         class_weight='balanced',
-        n_jobs=-1,
+        n_jobs=1,
     )
 
     pipeline = Pipeline([
         ('pre_processamento', pre_processamento),
-        ('classificador', modelo),
+        ('classificador', modelo_base),
     ])
+
+    grade_parametros = {
+        'classificador__n_estimators': [30, 40, 50],
+        'classificador__max_depth': [8, 12, 16],
+        'classificador__min_samples_leaf': [3, 5, 8],
+        'classificador__criterion': ['gini', 'entropy'],
+    }
+
+    busca = RandomizedSearchCV(
+        estimator=pipeline,
+        param_distributions=grade_parametros,
+        n_iter=3,
+        cv=StratifiedKFold(n_splits=3, shuffle=True, random_state=42),
+        scoring='accuracy',
+        random_state=42,
+        n_jobs=1,
+    )
 
     print('\n====================================================')
     print('ALVO:', alvo)
@@ -155,16 +244,34 @@ def treinar_modelo(dados, alvo):
     print('2) Criar purchase_day e purchase_dayofweek a partir de purchase_date')
     print('3) Descartar:', COLUNAS_DESCARTADAS)
     print('4) Remover os alvos das colunas de entrada:', ALVOS)
-    print('5) Codificar variaveis categoricas com OneHotEncoder')
-    print('6) Treinar RandomForestClassifier')
+    print('5) Usar validacao cruzada estratificada')
+    print('6) Balancear os dados de treino de cada fold por oversampling')
+    print('7) Codificar variaveis categoricas com OneHotEncoder')
+    print('8) Normalizar variaveis numericas com StandardScaler')
+    print('9) Hiperparametrizar com RandomizedSearchCV')
+    print('10) Treinar RandomForestClassifier com os melhores parametros')
+    print('11) Avaliar a acuracia e demais metricas com cross validation')
 
-    pipeline.fit(atributos_treino, classe_treino)
-    classe_predita = pipeline.predict(atributos_teste)
-    classes = pipeline.named_steps['classificador'].classes_
+    print('\nFrequencia das classes antes do balanceamento:')
+    print(frequencia_antes)
+    print('\nFrequencia das classes depois do balanceamento:')
+    print(frequencia_depois)
 
-    acuracia_global = accuracy_score(classe_teste, classe_predita)
-    f1 = f1_score(classe_teste, classe_predita, average='weighted')
-    matriz, metricas_por_classe = calcular_metricas(classe_teste, classe_predita, classes)
+    busca.fit(atributos_balanceados, classe_balanceada)
+    pipeline = busca.best_estimator_
+    print('\nMelhores hiperparametros:')
+    print(busca.best_params_)
+
+    cv_avaliacao = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+    classe_predita = avaliar_com_cross_validation(pipeline, atributos, classe, cv_avaliacao)
+    classes = sorted(classe.unique())
+
+    atributos_finais, classe_final = balancear_dados(atributos, classe)
+    pipeline.fit(atributos_finais, classe_final)
+
+    acuracia_global = accuracy_score(classe, classe_predita)
+    f1 = f1_score(classe, classe_predita, average='weighted')
+    matriz, metricas_por_classe = calcular_metricas(classe, classe_predita, classes)
 
     print('\nAcuracia global:', round(acuracia_global, 4))
     print('F1-score ponderado:', round(f1, 4))
@@ -191,6 +298,7 @@ def treinar_modelo(dados, alvo):
         'colunas_atributos': atributos.columns.tolist(),
         'colunas_descartadas': COLUNAS_DESCARTADAS,
         'alvos': ALVOS,
+        'melhores_parametros': busca.best_params_,
     }, open(caminho_modelo, 'wb'))
     print('\nModelo salvo em:', caminho_modelo)
     return criar_relatorio_markdown(
@@ -201,6 +309,9 @@ def treinar_modelo(dados, alvo):
         classes,
         metricas_por_classe,
         caminho_modelo,
+        frequencia_antes,
+        frequencia_depois,
+        busca.best_params_,
     )
 
 
