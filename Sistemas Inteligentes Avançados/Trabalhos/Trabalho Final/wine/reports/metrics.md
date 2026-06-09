@@ -1,19 +1,9 @@
 # Wine Quality - Relatorio
 
-## Pipeline
-
-1. Ler `winequality-red.csv` e `winequality-white.csv`.
-2. Unir os dois arquivos em `data/winequality-combined.csv`.
-3. Separar atributos e classe, usando `quality` como alvo.
-4. Dividir os dados em treino e teste.
-5. Treinar tres classificadores.
-6. Avaliar acuracia global, acuracia por classe, matriz de confusao e F1-score.
-7. Salvar o melhor modelo para inferencia.
-
 ## Melhor Modelo
 
 - Modelo: `extra_trees`
-- Arquivo salvo: `/Users/gabrielarnold/Downloads/wine/models/melhor_modelo_wine.pkl`
+- Arquivo salvo: `/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avançados/Trabalhos/Trabalho Final/wine/models/melhor_modelo_wine.pkl`
 - Acuracia global: `0.6872`
 - F1 macro: `0.4162`
 - F1 ponderado: `0.6777`

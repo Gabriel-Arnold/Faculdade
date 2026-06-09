@@ -1,6 +1,6 @@
 {
   "dataset": {
-    "dados_combinados": "/Users/gabrielarnold/Downloads/wine/data/winequality-combined.csv",
+    "dados_combinados": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/data/winequality-combined.csv",
     "linhas": 6497,
     "atributos": [
       "fixed acidity",
@@ -20,7 +20,7 @@
   "modelos": {
     "random_forest": {
       "nome": "random_forest",
-      "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/random_forest.pkl",
+      "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/random_forest.pkl",
       "acuracia_global": 0.6753846153846154,
       "f1_macro": 0.40032578894006904,
       "f1_weighted": 0.6645996058864276,
@@ -110,7 +110,7 @@
     },
     "extra_trees": {
       "nome": "extra_trees",
-      "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/extra_trees.pkl",
+      "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/extra_trees.pkl",
       "acuracia_global": 0.6871794871794872,
       "f1_macro": 0.41624018204213087,
       "f1_weighted": 0.6776676039553299,
@@ -200,7 +200,7 @@
     },
     "gradient_boosting": {
       "nome": "gradient_boosting",
-      "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/gradient_boosting.pkl",
+      "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/gradient_boosting.pkl",
       "acuracia_global": 0.5938461538461538,
       "f1_macro": 0.332304408954711,
       "f1_weighted": 0.5797786692480906,
@@ -291,7 +291,7 @@
   },
   "melhor_modelo": {
     "nome": "extra_trees",
-    "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/melhor_modelo_wine.pkl",
+    "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/melhor_modelo_wine.pkl",
     "acuracia_global": 0.6871794871794872,
     "f1_macro": 0.41624018204213087,
     "f1_weighted": 0.6776676039553299,
