@@ -57,7 +57,7 @@ def descriptografar(lista, chave_privada):
 
 # ---------------- CHAT CLIENTE ----------------
 HOST = "127.0.0.1"
-PORTA = 5000
+PORTA = 5050
 
 minha_publica, minha_privada = gerar_chaves()
 chave_publica_servidor = None
