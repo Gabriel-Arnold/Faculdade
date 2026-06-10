@@ -3,7 +3,7 @@ import threading
 import random
 import math
 
-# ---------------- RSA SIMPLES ----------------
+# RSA
 def eh_primo(n):
     if n < 2:
         return False
@@ -55,7 +55,7 @@ def descriptografar(lista, chave_privada):
     d, n = chave_privada
     return ''.join(chr(pow(num, d, n)) for num in lista)
 
-# ---------------- CHAT SERVIDOR ----------------
+# CHAT SERVIDOR
 HOST = "127.0.0.1"
 PORTA = 5050
 
