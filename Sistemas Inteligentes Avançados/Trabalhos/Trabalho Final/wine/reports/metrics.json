@@ -1,6 +1,6 @@
 {
   "dataset": {
-    "dados_combinados": "/Users/gabrielarnold/Downloads/wine/data/winequality-combined.csv",
+    "dados_combinados": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/data/winequality-combined.csv",
     "linhas": 6497,
     "atributos": [
       "fixed acidity",
@@ -24,7 +24,7 @@
   "modelos": {
     "random_forest": {
       "nome": "random_forest",
-      "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/random_forest.pkl",
+      "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/random_forest.pkl",
       "melhores_parametros": {
         "classificador__n_estimators": 100,
         "classificador__min_samples_split": 5,
@@ -120,7 +120,7 @@
     },
     "extra_trees": {
       "nome": "extra_trees",
-      "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/extra_trees.pkl",
+      "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/extra_trees.pkl",
       "melhores_parametros": {
         "classificador__n_estimators": 100,
         "classificador__min_samples_split": 5,
@@ -216,7 +216,7 @@
     },
     "gradient_boosting": {
       "nome": "gradient_boosting",
-      "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/gradient_boosting.pkl",
+      "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/gradient_boosting.pkl",
       "melhores_parametros": {
         "classificador__n_estimators": 50,
         "classificador__max_depth": 2,
@@ -312,7 +312,7 @@
   },
   "melhor_modelo": {
     "nome": "extra_trees",
-    "caminho_modelo": "/Users/gabrielarnold/Downloads/wine/models/melhor_modelo_wine.pkl",
+    "caminho_modelo": "/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avan\u00e7ados/Trabalhos/Trabalho Final/wine/models/melhor_modelo_wine.pkl",
     "melhores_parametros": {
       "classificador__n_estimators": 100,
       "classificador__min_samples_split": 5,

@@ -3,7 +3,7 @@
 ## Melhor Modelo
 
 - Modelo: `extra_trees`
-- Arquivo salvo: `/Users/gabrielarnold/Downloads/wine/models/melhor_modelo_wine.pkl`
+- Arquivo salvo: `/Users/gabrielarnold/GitHub/Faculdade/Sistemas Inteligentes Avançados/Trabalhos/Trabalho Final/wine/models/melhor_modelo_wine.pkl`
 - Acuracia global: `0.6869`
 - F1 macro: `0.4103`
 - F1 ponderado: `0.6803`
